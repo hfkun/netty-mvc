@@ -14,14 +14,13 @@ public class TestController {
     @RequestMapping("/find")
     public String find(@RequestParam("id") String id,
                        HttpRequest req){
-        System.out.println(req.uri());
-        return "find, netty-mvc, id:"+id;
+        return "find, 您好啊，netty-mvc, id:"+id;
     }
 
     @RequestMapping(value = "/update", method = "POST")
     public String update(@RequestParam("id") String id,
                          @RequestParam("type") Integer type,
                          @RequestBody Bill bill){
-        return "update, netty-mvc, id:"+bill.getId() + ", type:"+type;
+        return "update, 您好啊，netty-mvc, id:"+bill.getId() + ", type:"+type;
     }
 }

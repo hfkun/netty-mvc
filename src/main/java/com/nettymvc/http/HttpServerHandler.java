@@ -20,9 +20,11 @@ import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
+import io.netty.util.CharsetUtil;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
@@ -124,7 +126,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<HttpObject> {
 
             boolean keepAlive = HttpUtil.isKeepAlive(req);
             FullHttpResponse response = new DefaultFullHttpResponse(req.protocolVersion(), httpResponseStatus,
-                                                                    Unpooled.wrappedBuffer(res.getBytes()));
+                                                                    Unpooled.copiedBuffer(res, CharsetUtil.UTF_8));
             response.headers()
                     .set(CONTENT_TYPE, TEXT_PLAIN)
                     .setInt(CONTENT_LENGTH, response.content().readableBytes());
@@ -138,7 +140,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<HttpObject> {
                 response.headers().set(CONNECTION, CLOSE);
             }
 
-            ChannelFuture f = ctx.write(response);
+            ChannelFuture f = ctx.writeAndFlush(response);
 
             if (!keepAlive) {
                 f.addListener(ChannelFutureListener.CLOSE);
